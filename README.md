@@ -1,3 +1,4 @@
+![pytest](https://github.com/RufusMacKenzie/chinook-sql-tests/actions/workflows/pytest.yml/badge.svg)
 # Chinook SQL pytest Test Suite
 
 A pytest-based test suite validating the Chinook sample database using SQLite, 
