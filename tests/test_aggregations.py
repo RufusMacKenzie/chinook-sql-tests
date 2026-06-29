@@ -86,7 +86,7 @@ def test_total_sales_by_country(db_connection):
     EXPECTED_TOP_INVOICE_TOTAL = 523.06
     cursor = db_connection.cursor()
     rows = cursor.execute("""
-        SELECT BillingCountry, ROUND(SUM(Total),) as InvoiceTotal
+        SELECT BillingCountry, ROUND(SUM(Total),2) as InvoiceTotal
         FROM Invoice
         GROUP BY BillingCountry
         ORDER BY InvoiceTotal DESC
