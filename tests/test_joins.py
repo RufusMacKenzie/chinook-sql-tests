@@ -35,11 +35,17 @@ def test_employee_manager_left_join(db_connection):
     # LEFT JOIN Employee to itself, verify 8 rows total
     cursor = db_connection.cursor()
     rows = cursor.execute("""
-        SELECT e.FirstName, e.LastName, m.FirstName, m.LastName 
+        SELECT e.FirstName, e.LastName, m.FirstName as ManagerFirstName, m.LastName as ManagerLastName
         FROM Employee e 
         LEFT JOIN Employee m ON e.ReportsTo = m.EmployeeId;
     """).fetchall()
     assert len(rows) == 8
+
+    # Andrew Adams has no manager — this is the whole point of LEFT JOIN
+    andrew = next((r for r in rows if r["LastName"] == "Adams"), None)
+    assert andrew is not None
+    assert andrew["ManagerFirstName"] is None
+    assert andrew["ManagerLastName"] is None
 
 
 def test_employee_manager_inner_join(db_connection):

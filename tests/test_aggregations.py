@@ -52,6 +52,49 @@ def test_track_count_by_genre(db_connection):
     )
 
 
+def test_genres_with_more_than_100_tracks(db_connection):
+    EXPECTED_GENRE_COUNT = 5
+    cursor = db_connection.cursor()
+    rows = cursor.execute("""
+        SELECT g.Name, COUNT(t.TrackId) as TrackCount
+        FROM Genre g
+        INNER JOIN Track t ON t.GenreId = g.GenreId
+        GROUP BY g.Name
+        HAVING COUNT(t.TrackId) > 100
+        ORDER BY TrackCount DESC
+    """).fetchall()
+
+    check.equal(
+        EXPECTED_GENRE_COUNT,
+        len(rows),
+        f"Expected {EXPECTED_GENRE_COUNT} genres with >100 tracks, got {len(rows)}",
+    )
+    check.equal("Rock", rows[0]["Name"], "Expected Rock to be top genre")
+    check.equal(1297, rows[0]["TrackCount"], "Expected Rock to have 1297 tracks")
+
+
+def test_tracks_longer_than_average(db_connection):
+    EXPECTED_COUNT = 494
+    cursor = db_connection.cursor()
+    rows = cursor.execute("""
+        SELECT Name, Milliseconds
+        FROM Track
+        WHERE Milliseconds > (SELECT AVG(Milliseconds) FROM Track)
+        ORDER BY Milliseconds DESC
+    """).fetchall()
+
+    check.equal(
+        EXPECTED_COUNT,
+        len(rows),
+        f"Expected {EXPECTED_COUNT} tracks longer than average, got {len(rows)}",
+    )
+    # First row should be the longest track
+    check.is_true(
+        rows[0]["Milliseconds"] > rows[-1]["Milliseconds"],
+        "Results should be ordered longest first",
+    )
+
+
 def test_total_invoices_by_country(db_connection):
     # count of Invoices grouped by country, verify USA is the top country
     EXPECTED_TOP_INVOICE_COUNTRY = "USA"
