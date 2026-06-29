@@ -86,7 +86,7 @@ def test_total_sales_by_country(db_connection):
     EXPECTED_TOP_INVOICE_TOTAL = 523.06
     cursor = db_connection.cursor()
     rows = cursor.execute("""
-        SELECT BillingCountry, Sum(Total) as InvoiceTotal
+        SELECT BillingCountry, ROUND(SUM(Total),) as InvoiceTotal
         FROM Invoice
         GROUP BY BillingCountry
         ORDER BY InvoiceTotal DESC
@@ -155,5 +155,5 @@ def test_customer_invoice_count(db_connection):
     check.equal(
         EXPECTED_INVOICE_COUNT,
         invoice_count,
-        f"Expected {EXPECTED_INVOICE_COUNT} invoices, but got found {invoice_count}",
+        f"Expected {EXPECTED_INVOICE_COUNT} invoices, but got {invoice_count}",
     )

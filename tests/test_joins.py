@@ -46,7 +46,8 @@ def test_employee_manager_inner_join(db_connection):
     # INNER JOIN Employee to itself, verify 7 rows (Andrew excluded)
     cursor = db_connection.cursor()
     rows = cursor.execute("""
-        SELECT e.FirstName, e.LastName, m.FirstName, m.LastName 
+        SELECT e.FirstName as EmployeeFirstName, e.LastName as EmployeeLastName,
+        m.FirstName as ManagerFirstName, m.LastName as ManagerLastName
         FROM Employee e 
         INNER JOIN Employee m ON e.ReportsTo = m.EmployeeId;
     """).fetchall()
